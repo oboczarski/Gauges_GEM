@@ -1,0 +1,6 @@
+{
+  "name": "Playoff Probability Matrix · 10 Advanced Gauges",
+  "description": "A premium dark-mode data visualization suite showcasing 10 radically distinct, production-grade gauge charts for playoff probabilities, projected seeds, and team records.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
