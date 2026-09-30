@@ -11,6 +11,7 @@ export const Gauge10_EclipseArc: React.FC<Props> = ({ team, customization }) => 
   const cy = 160;
   const r = 106;
   const innerR = 86;
+  const cleanId = team.id.replace(/\s+/g, '_');
   const value = customization?.probabilityOverride ?? team.probability; // 11.1%
   const clampedVal = Math.min(100, Math.max(0, value));
 
@@ -24,8 +25,8 @@ export const Gauge10_EclipseArc: React.FC<Props> = ({ team, customization }) => 
   const arcEnd = customization?.arcColorEnd || '#f8fafc';
 
   // Core Dome Styling (Rich Starlight Indigo Navy, non-black)
-  const corePrimary = customization?.corePrimaryColor || '#4338ca';
-  const coreSecondary = customization?.coreSecondaryColor || '#3730a3';
+  const corePrimary = customization?.corePrimaryColor || '#4f46e5';
+  const coreSecondary = customization?.coreSecondaryColor || '#7c3aed';
   const coreGradientType = customization?.coreGradientType || 'radial';
   const coreOpacity = customization?.coreOpacity ?? 0.85;
   const coreBorderColor = customization?.coreBorderColor || '#818cf8';
@@ -107,7 +108,7 @@ export const Gauge10_EclipseArc: React.FC<Props> = ({ team, customization }) => 
       >
         <defs>
           <linearGradient
-            id={`hairlineGrad10_${team.id}`}
+            id={`hairlineGrad10_${cleanId}`}
             gradientUnits="userSpaceOnUse"
             x1={cx - r}
             y1={cy}
@@ -119,18 +120,31 @@ export const Gauge10_EclipseArc: React.FC<Props> = ({ team, customization }) => 
             <stop offset="100%" stopColor={arcEnd} />
           </linearGradient>
 
-          <radialGradient id={`obsidianDome10_${team.id}`} cx="50%" cy="50%" r="85%">
+          <radialGradient
+            id={`obsidianDome10_${cleanId}`}
+            cx={cx}
+            cy={cy - innerR * 0.3}
+            r={innerR * 0.95}
+            gradientUnits="userSpaceOnUse"
+          >
             <stop offset="0%" stopColor={corePrimary} stopOpacity={coreOpacity} />
-            <stop offset="60%" stopColor={corePrimary} stopOpacity={coreOpacity * 0.95} />
+            <stop offset="55%" stopColor={corePrimary} stopOpacity={coreOpacity * 0.95} />
             <stop offset="100%" stopColor={coreSecondary} stopOpacity={coreOpacity} />
           </radialGradient>
 
-          <linearGradient id={`obsidianLinear10_${team.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+          <linearGradient
+            id={`obsidianLinear10_${cleanId}`}
+            x1={cx}
+            y1={cy - innerR}
+            x2={cx}
+            y2={cy}
+            gradientUnits="userSpaceOnUse"
+          >
             <stop offset="0%" stopColor={corePrimary} stopOpacity={coreOpacity} />
             <stop offset="100%" stopColor={coreSecondary} stopOpacity={coreOpacity} />
           </linearGradient>
 
-          <filter id={`coronaGlow10_${team.id}`} x="-40%" y="-40%" width="180%" height="180%">
+          <filter id={`coronaGlow10_${cleanId}`} x="-40%" y="-40%" width="180%" height="180%">
             <feGaussianBlur stdDeviation={glow} result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
@@ -146,8 +160,8 @@ export const Gauge10_EclipseArc: React.FC<Props> = ({ team, customization }) => 
             coreGradientType === 'solid'
               ? corePrimary
               : coreGradientType === 'linear'
-              ? `url(#obsidianLinear10_${team.id})`
-              : `url(#obsidianDome10_${team.id})`
+              ? `url(#obsidianLinear10_${cleanId})`
+              : `url(#obsidianDome10_${cleanId})`
           }
           fillOpacity={coreGradientType === 'solid' ? coreOpacity : undefined}
           stroke={coreBorderColor}
@@ -214,16 +228,16 @@ export const Gauge10_EclipseArc: React.FC<Props> = ({ team, customization }) => 
           <path
             d={activeArcPath}
             fill="none"
-            stroke={`url(#hairlineGrad10_${team.id})`}
+            stroke={`url(#hairlineGrad10_${cleanId})`}
             strokeWidth={hairlineWeight}
             strokeLinecap="round"
-            filter={glow > 0 ? `url(#coronaGlow10_${team.id})` : undefined}
+            filter={glow > 0 ? `url(#coronaGlow10_${cleanId})` : undefined}
           />
         )}
 
         {/* Precision Micro-Notch at Current Probability */}
         {clampedVal > 0 && (
-          <g transform={`translate(${curX}, ${curY})`} filter={glow > 0 ? `url(#coronaGlow10_${team.id})` : undefined}>
+          <g transform={`translate(${curX}, ${curY})`} filter={glow > 0 ? `url(#coronaGlow10_${cleanId})` : undefined}>
             {notchStyle === 'dot' ? (
               <circle cx="0" cy="0" r={notchSize * 0.7} fill={notchColor} stroke={notchBorder} strokeWidth="1.5" />
             ) : notchStyle === 'cross' ? (

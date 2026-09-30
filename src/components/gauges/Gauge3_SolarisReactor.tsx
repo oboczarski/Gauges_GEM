@@ -25,8 +25,8 @@ export const Gauge3_SolarisReactor: React.FC<Props> = ({ team, customization }) 
   const track3Color = customization?.gauge3Track3Color || arcStart;
 
   // Core Dome Styling (Rich Glowing Solar Amber, non-black)
-  const corePrimary = customization?.corePrimaryColor || '#c2410c';
-  const coreSecondary = customization?.coreSecondaryColor || '#9a3412';
+  const corePrimary = customization?.corePrimaryColor || '#ea580c';
+  const coreSecondary = customization?.coreSecondaryColor || '#d97706';
   const coreGradientType = customization?.coreGradientType || 'radial';
   const coreOpacity = customization?.coreOpacity ?? 0.85;
   const coreBorderColor = customization?.coreBorderColor || '#f97316';
@@ -68,6 +68,7 @@ export const Gauge3_SolarisReactor: React.FC<Props> = ({ team, customization }) 
   const r2 = 100; // Middle: Projected Win Rate
   const r3 = 86;  // Inner: Pace
   const innerR = 72; // Center dome
+  const cleanId = team.id.replace(/\s+/g, '_');
 
   const probVal = customization?.probabilityOverride ?? team.probability;
   const winVal = (team.wins / 14) * 100;
@@ -108,7 +109,7 @@ export const Gauge3_SolarisReactor: React.FC<Props> = ({ team, customization }) 
         <defs>
           {/* Main UserSpaceOnUse Multi-Stop Gradient for Track 1 */}
           <linearGradient
-            id={`solarGrad1_${team.id}`}
+            id={`solarGrad1_${cleanId}`}
             gradientUnits="userSpaceOnUse"
             x1={cx - r1}
             y1={cy}
@@ -122,7 +123,7 @@ export const Gauge3_SolarisReactor: React.FC<Props> = ({ team, customization }) 
 
           {/* UserSpaceOnUse Gradient for Track 2 */}
           <linearGradient
-            id={`solarGrad2_${team.id}`}
+            id={`solarGrad2_${cleanId}`}
             gradientUnits="userSpaceOnUse"
             x1={cx - r2}
             y1={cy}
@@ -135,7 +136,7 @@ export const Gauge3_SolarisReactor: React.FC<Props> = ({ team, customization }) 
 
           {/* UserSpaceOnUse Gradient for Track 3 */}
           <linearGradient
-            id={`solarGrad3_${team.id}`}
+            id={`solarGrad3_${cleanId}`}
             gradientUnits="userSpaceOnUse"
             x1={cx - r3}
             y1={cy}
@@ -147,18 +148,31 @@ export const Gauge3_SolarisReactor: React.FC<Props> = ({ team, customization }) 
           </linearGradient>
 
           {/* Center Sunburst Radial Gradient */}
-          <radialGradient id={`solarSunburstDome3_${team.id}`} cx="50%" cy="50%" r="85%">
+          <radialGradient
+            id={`solarSunburstDome3_${cleanId}`}
+            cx={cx}
+            cy={cy - innerR * 0.3}
+            r={innerR * 0.95}
+            gradientUnits="userSpaceOnUse"
+          >
             <stop offset="0%" stopColor={corePrimary} stopOpacity={coreOpacity} />
-            <stop offset="60%" stopColor={corePrimary} stopOpacity={coreOpacity * 0.95} />
+            <stop offset="55%" stopColor={corePrimary} stopOpacity={coreOpacity * 0.95} />
             <stop offset="100%" stopColor={coreSecondary} stopOpacity={coreOpacity} />
           </radialGradient>
 
-          <linearGradient id={`solarSunburstLinear3_${team.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+          <linearGradient
+            id={`solarSunburstLinear3_${cleanId}`}
+            x1={cx}
+            y1={cy - innerR}
+            x2={cx}
+            y2={cy}
+            gradientUnits="userSpaceOnUse"
+          >
             <stop offset="0%" stopColor={corePrimary} stopOpacity={coreOpacity} />
             <stop offset="100%" stopColor={coreSecondary} stopOpacity={coreOpacity} />
           </linearGradient>
 
-          <filter id={`solarGlow3_${team.id}`} x="-30%" y="-30%" width="160%" height="160%">
+          <filter id={`solarGlow3_${cleanId}`} x="-30%" y="-30%" width="160%" height="160%">
             <feGaussianBlur stdDeviation={glow} result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
@@ -174,8 +188,8 @@ export const Gauge3_SolarisReactor: React.FC<Props> = ({ team, customization }) 
             coreGradientType === 'solid'
               ? corePrimary
               : coreGradientType === 'linear'
-              ? `url(#solarSunburstLinear3_${team.id})`
-              : `url(#solarSunburstDome3_${team.id})`
+              ? `url(#solarSunburstLinear3_${cleanId})`
+              : `url(#solarSunburstDome3_${cleanId})`
           }
           fillOpacity={coreGradientType === 'solid' ? coreOpacity : undefined}
           stroke={coreBorderColor}
@@ -241,7 +255,7 @@ export const Gauge3_SolarisReactor: React.FC<Props> = ({ team, customization }) 
             <path
               d={getArcPath(r3, paceVal)}
               fill="none"
-              stroke={`url(#solarGrad3_${team.id})`}
+              stroke={`url(#solarGrad3_${cleanId})`}
               strokeWidth={trackWidth}
               strokeLinecap="round"
             />
@@ -262,7 +276,7 @@ export const Gauge3_SolarisReactor: React.FC<Props> = ({ team, customization }) 
             <path
               d={getArcPath(r2, winVal)}
               fill="none"
-              stroke={`url(#solarGrad2_${team.id})`}
+              stroke={`url(#solarGrad2_${cleanId})`}
               strokeWidth={trackWidth}
               strokeLinecap="round"
             />
@@ -281,10 +295,10 @@ export const Gauge3_SolarisReactor: React.FC<Props> = ({ team, customization }) 
         <path
           d={getArcPath(r1, probVal)}
           fill="none"
-          stroke={`url(#solarGrad1_${team.id})`}
+          stroke={`url(#solarGrad1_${cleanId})`}
           strokeWidth={trackWidth}
           strokeLinecap="round"
-          filter={glow > 0 ? `url(#solarGlow3_${team.id})` : undefined}
+          filter={glow > 0 ? `url(#solarGlow3_${cleanId})` : undefined}
         />
 
         {/* 50% Bubble Cutline */}

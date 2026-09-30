@@ -11,6 +11,7 @@ export const Gauge5_QuantumPhaseDial: React.FC<Props> = ({ team, customization }
   const cx = 160;
   const cy = 160;
   const innerR = 86;
+  const cleanId = team.id.replace(/\s+/g, '_');
   const value = customization?.probabilityOverride ?? team.probability; // 65.2%
   const clampedVal = Math.min(100, Math.max(0, value));
 
@@ -24,8 +25,8 @@ export const Gauge5_QuantumPhaseDial: React.FC<Props> = ({ team, customization }
   const arcEnd = customization?.arcColorEnd || '#34d399';
 
   // Core Dome Styling (Rich Oceanic Teal Vignette, non-black)
-  const corePrimary = customization?.corePrimaryColor || '#0f766e';
-  const coreSecondary = customization?.coreSecondaryColor || '#115e59';
+  const corePrimary = customization?.corePrimaryColor || '#0d9488';
+  const coreSecondary = customization?.coreSecondaryColor || '#0284c7';
   const coreGradientType = customization?.coreGradientType || 'radial';
   const coreOpacity = customization?.coreOpacity ?? 0.85;
   const coreBorderColor = customization?.coreBorderColor || '#14b8a6';
@@ -110,18 +111,31 @@ export const Gauge5_QuantumPhaseDial: React.FC<Props> = ({ team, customization }
         aria-label={`${team.name} Playoff Probability ${value.toFixed(decimalPlaces)}%`}
       >
         <defs>
-          <radialGradient id={`tealDome5_${team.id}`} cx="50%" cy="50%" r="85%">
+          <radialGradient
+            id={`tealDome5_${cleanId}`}
+            cx={cx}
+            cy={cy - innerR * 0.3}
+            r={innerR * 0.95}
+            gradientUnits="userSpaceOnUse"
+          >
             <stop offset="0%" stopColor={corePrimary} stopOpacity={coreOpacity} />
-            <stop offset="60%" stopColor={corePrimary} stopOpacity={coreOpacity * 0.95} />
+            <stop offset="55%" stopColor={corePrimary} stopOpacity={coreOpacity * 0.95} />
             <stop offset="100%" stopColor={coreSecondary} stopOpacity={coreOpacity} />
           </radialGradient>
 
-          <linearGradient id={`tealLinear5_${team.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+          <linearGradient
+            id={`tealLinear5_${cleanId}`}
+            x1={cx}
+            y1={cy - innerR}
+            x2={cx}
+            y2={cy}
+            gradientUnits="userSpaceOnUse"
+          >
             <stop offset="0%" stopColor={corePrimary} stopOpacity={coreOpacity} />
             <stop offset="100%" stopColor={coreSecondary} stopOpacity={coreOpacity} />
           </linearGradient>
 
-          <filter id={`blockGlow5_${team.id}`} x="-30%" y="-30%" width="160%" height="160%">
+          <filter id={`blockGlow5_${cleanId}`} x="-30%" y="-30%" width="160%" height="160%">
             <feGaussianBlur stdDeviation={glow} result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
@@ -137,8 +151,8 @@ export const Gauge5_QuantumPhaseDial: React.FC<Props> = ({ team, customization }
             coreGradientType === 'solid'
               ? corePrimary
               : coreGradientType === 'linear'
-              ? `url(#tealLinear5_${team.id})`
-              : `url(#tealDome5_${team.id})`
+              ? `url(#tealLinear5_${cleanId})`
+              : `url(#tealDome5_${cleanId})`
           }
           fillOpacity={coreGradientType === 'solid' ? coreOpacity : undefined}
           stroke={coreBorderColor}
@@ -173,7 +187,7 @@ export const Gauge5_QuantumPhaseDial: React.FC<Props> = ({ team, customization }
         )}
 
         {/* Segmented Decile Stadium Blocks */}
-        <g filter={glow > 0 ? `url(#blockGlow5_${team.id})` : undefined}>
+        <g filter={glow > 0 ? `url(#blockGlow5_${cleanId})` : undefined}>
           {blocks.map((b) => (
             <path
               key={b.index}

@@ -11,6 +11,7 @@ export const Gauge6_EquilibriumCaliper: React.FC<Props> = ({ team, customization
   const cy = 160;
   const r = 104;
   const innerR = 86;
+  const cleanId = team.id.replace(/\s+/g, '_');
   const value = customization?.probabilityOverride ?? team.probability; // 50.0%
 
   // Progress Bar Multi-Stop Colors
@@ -23,9 +24,11 @@ export const Gauge6_EquilibriumCaliper: React.FC<Props> = ({ team, customization
   const trackBgColor = customization?.trackBgColor || '#141c2b';
   const trackBgOpacity = customization?.trackBgOpacity ?? 0.6;
 
-  // Chart-Specific: Dual Split Dome Colors (Rich Crimson Hazard & Emerald Safe, non-black)
-  const leftDomeColor = customization?.gauge6LeftDomeColor || customization?.corePrimaryColor || '#991b1b';
-  const rightDomeColor = customization?.gauge6RightDomeColor || customization?.coreSecondaryColor || '#047857';
+  // Core Dome Styling
+  const corePrimary = customization?.corePrimaryColor || customization?.gauge6LeftDomeColor || '#dc2626';
+  const coreSecondary = customization?.coreSecondaryColor || customization?.gauge6RightDomeColor || '#059669';
+  const leftDomeColor = customization?.gauge6LeftDomeColor || corePrimary;
+  const rightDomeColor = customization?.gauge6RightDomeColor || coreSecondary;
   const coreGradientType = customization?.coreGradientType || 'radial';
   const coreOpacity = customization?.coreOpacity ?? 0.85;
   const coreBorderColor = customization?.coreBorderColor || '#475569';
@@ -69,6 +72,7 @@ export const Gauge6_EquilibriumCaliper: React.FC<Props> = ({ team, customization
   const cutlineApexX = cx + innerR * Math.cos(cutlineRad);
   const cutlineApexY = cy + innerR * Math.sin(cutlineRad);
 
+  const centerDomePath = `M ${cx - innerR} ${cy} A ${innerR} ${innerR} 0 0 1 ${cx + innerR} ${cy} Z`;
   const leftDomePath = `M ${cx - innerR} ${cy} A ${innerR} ${innerR} 0 0 1 ${cutlineApexX} ${cutlineApexY} L ${cx} ${cy} Z`;
   const rightDomePath = `M ${cutlineApexX} ${cutlineApexY} A ${innerR} ${innerR} 0 0 1 ${cx + innerR} ${cy} L ${cx} ${cy} Z`;
 
@@ -96,7 +100,7 @@ export const Gauge6_EquilibriumCaliper: React.FC<Props> = ({ team, customization
         <defs>
           {/* UserSpaceOnUse Multi-Stop Gradient mapped across full 0%–100% sweep of the gauge */}
           <linearGradient
-            id={`activeProgressGrad6_${team.id}`}
+            id={`activeProgressGrad6_${cleanId}`}
             gradientUnits="userSpaceOnUse"
             x1={cx - r}
             y1={cy}
@@ -108,22 +112,47 @@ export const Gauge6_EquilibriumCaliper: React.FC<Props> = ({ team, customization
             <stop offset="100%" stopColor={arcEnd} />
           </linearGradient>
 
-          {/* Left Split Dome Gradient */}
-          <radialGradient id={`leftDomeGrad6_${team.id}`} cx="50%" cy="50%" r="90%">
+          {/* Unified Center Dome Linear Gradient */}
+          <linearGradient
+            id={`centerDomeLinear6_${cleanId}`}
+            x1={cx}
+            y1={cy - innerR}
+            x2={cx}
+            y2={cy}
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop offset="0%" stopColor={corePrimary} stopOpacity={coreOpacity} />
+            <stop offset="100%" stopColor={coreSecondary} stopOpacity={coreOpacity} />
+          </linearGradient>
+
+          {/* Left Split Dome Radial Gradient */}
+          <radialGradient
+            id={`leftDomeGrad6_${cleanId}`}
+            cx={cx - innerR * 0.35}
+            cy={cy - innerR * 0.3}
+            r={innerR * 0.95}
+            gradientUnits="userSpaceOnUse"
+          >
             <stop offset="0%" stopColor={leftDomeColor} stopOpacity={coreOpacity} />
-            <stop offset="70%" stopColor={leftDomeColor} stopOpacity={coreOpacity * 0.9} />
-            <stop offset="100%" stopColor={leftDomeColor} stopOpacity={coreOpacity * 0.75} />
+            <stop offset="60%" stopColor={leftDomeColor} stopOpacity={coreOpacity * 0.95} />
+            <stop offset="100%" stopColor={coreSecondary} stopOpacity={coreOpacity} />
           </radialGradient>
 
-          {/* Right Split Dome Gradient */}
-          <radialGradient id={`rightDomeGrad6_${team.id}`} cx="50%" cy="50%" r="90%">
+          {/* Right Split Dome Radial Gradient */}
+          <radialGradient
+            id={`rightDomeGrad6_${cleanId}`}
+            cx={cx + innerR * 0.35}
+            cy={cy - innerR * 0.3}
+            r={innerR * 0.95}
+            gradientUnits="userSpaceOnUse"
+          >
             <stop offset="0%" stopColor={rightDomeColor} stopOpacity={coreOpacity} />
-            <stop offset="70%" stopColor={rightDomeColor} stopOpacity={coreOpacity * 0.9} />
-            <stop offset="100%" stopColor={rightDomeColor} stopOpacity={coreOpacity * 0.75} />
+            <stop offset="60%" stopColor={rightDomeColor} stopOpacity={coreOpacity * 0.95} />
+            <stop offset="100%" stopColor={corePrimary} stopOpacity={coreOpacity} />
           </radialGradient>
 
           {/* Glowing filter for the active progress bar */}
-          <filter id={`progressGlow6_${team.id}`} x="-30%" y="-30%" width="160%" height="160%">
+          <filter id={`progressGlow6_${cleanId}`} x="-30%" y="-30%" width="160%" height="160%">
             <feGaussianBlur stdDeviation={glow} result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
@@ -132,21 +161,41 @@ export const Gauge6_EquilibriumCaliper: React.FC<Props> = ({ team, customization
           </filter>
         </defs>
 
-        {/* Left Split Dome (Hazard Zone) */}
-        <path
-          d={leftDomePath}
-          fill={`url(#leftDomeGrad6_${team.id})`}
-          stroke={coreBorderColor}
-          strokeWidth={coreBorderWidth}
-        />
+        {/* Center Dome: Solid Color, Linear Drop, or Split Radial Hemispheres */}
+        {coreGradientType === 'solid' ? (
+          <path
+            d={centerDomePath}
+            fill={corePrimary}
+            fillOpacity={coreOpacity}
+            stroke={coreBorderColor}
+            strokeWidth={coreBorderWidth}
+          />
+        ) : coreGradientType === 'linear' ? (
+          <path
+            d={centerDomePath}
+            fill={`url(#centerDomeLinear6_${cleanId})`}
+            stroke={coreBorderColor}
+            strokeWidth={coreBorderWidth}
+          />
+        ) : (
+          <>
+            {/* Left Split Dome (Hazard Zone) */}
+            <path
+              d={leftDomePath}
+              fill={`url(#leftDomeGrad6_${cleanId})`}
+              stroke={coreBorderColor}
+              strokeWidth={coreBorderWidth}
+            />
 
-        {/* Right Split Dome (Safe Zone) */}
-        <path
-          d={rightDomePath}
-          fill={`url(#rightDomeGrad6_${team.id})`}
-          stroke={coreBorderColor}
-          strokeWidth={coreBorderWidth}
-        />
+            {/* Right Split Dome (Safe Zone) */}
+            <path
+              d={rightDomePath}
+              fill={`url(#rightDomeGrad6_${cleanId})`}
+              stroke={coreBorderColor}
+              strokeWidth={coreBorderWidth}
+            />
+          </>
+        )}
 
         {/* Inactive Background Track */}
         <path
@@ -163,10 +212,10 @@ export const Gauge6_EquilibriumCaliper: React.FC<Props> = ({ team, customization
           <path
             d={activeArcPath}
             fill="none"
-            stroke={`url(#activeProgressGrad6_${team.id})`}
+            stroke={`url(#activeProgressGrad6_${cleanId})`}
             strokeWidth={trackWidth}
             strokeLinecap="round"
-            filter={glow > 0 ? `url(#progressGlow6_${team.id})` : undefined}
+            filter={glow > 0 ? `url(#progressGlow6_${cleanId})` : undefined}
           />
         )}
 
@@ -191,7 +240,7 @@ export const Gauge6_EquilibriumCaliper: React.FC<Props> = ({ team, customization
             fill={beaconColor}
             stroke={beaconBorder}
             strokeWidth="2"
-            filter={glow > 0 ? `url(#progressGlow6_${team.id})` : undefined}
+            filter={glow > 0 ? `url(#progressGlow6_${cleanId})` : undefined}
           />
         )}
 

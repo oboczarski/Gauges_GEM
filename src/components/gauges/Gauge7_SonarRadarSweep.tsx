@@ -11,6 +11,7 @@ export const Gauge7_SonarRadarSweep: React.FC<Props> = ({ team, customization })
   const cx = 160;
   const cy = 160;
   const innerR = 76;
+  const cleanId = team.id.replace(/\s+/g, '_');
   const value = customization?.probabilityOverride ?? team.probability; // 33.2%
 
   // Progress Bar Multi-Stop Colors
@@ -25,8 +26,8 @@ export const Gauge7_SonarRadarSweep: React.FC<Props> = ({ team, customization })
   const unlitOpacity = customization?.gauge7UnlitOpacity ?? trackBgOpacity;
 
   // Core Dome Styling (Rich Electric Sapphire Blue, non-black)
-  const corePrimary = customization?.corePrimaryColor || '#1d4ed8';
-  const coreSecondary = customization?.coreSecondaryColor || '#1e40af';
+  const corePrimary = customization?.corePrimaryColor || '#2563eb';
+  const coreSecondary = customization?.coreSecondaryColor || '#4f46e5';
   const coreGradientType = customization?.coreGradientType || 'radial';
   const coreOpacity = customization?.coreOpacity ?? 0.85;
   const coreBorderColor = customization?.coreBorderColor || '#3b82f6';
@@ -128,7 +129,7 @@ export const Gauge7_SonarRadarSweep: React.FC<Props> = ({ team, customization })
       >
         <defs>
           <linearGradient
-            id={`activeProgressGrad7_${team.id}`}
+            id={`activeProgressGrad7_${cleanId}`}
             gradientUnits="userSpaceOnUse"
             x1={cx - outerArcR}
             y1={cy}
@@ -140,18 +141,31 @@ export const Gauge7_SonarRadarSweep: React.FC<Props> = ({ team, customization })
             <stop offset="100%" stopColor={arcEnd} />
           </linearGradient>
 
-          <radialGradient id={`sapphireDome7_${team.id}`} cx="50%" cy="50%" r="85%">
+          <radialGradient
+            id={`sapphireDome7_${cleanId}`}
+            cx={cx}
+            cy={cy - innerR * 0.3}
+            r={innerR * 0.95}
+            gradientUnits="userSpaceOnUse"
+          >
             <stop offset="0%" stopColor={corePrimary} stopOpacity={coreOpacity} />
-            <stop offset="60%" stopColor={corePrimary} stopOpacity={coreOpacity * 0.95} />
+            <stop offset="55%" stopColor={corePrimary} stopOpacity={coreOpacity * 0.95} />
             <stop offset="100%" stopColor={coreSecondary} stopOpacity={coreOpacity} />
           </radialGradient>
 
-          <linearGradient id={`sapphireLinear7_${team.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+          <linearGradient
+            id={`sapphireLinear7_${cleanId}`}
+            x1={cx}
+            y1={cy - innerR}
+            x2={cx}
+            y2={cy}
+            gradientUnits="userSpaceOnUse"
+          >
             <stop offset="0%" stopColor={corePrimary} stopOpacity={coreOpacity} />
             <stop offset="100%" stopColor={coreSecondary} stopOpacity={coreOpacity} />
           </linearGradient>
 
-          <filter id={`dotGlow7_${team.id}`} x="-30%" y="-30%" width="160%" height="160%">
+          <filter id={`dotGlow7_${cleanId}`} x="-30%" y="-30%" width="160%" height="160%">
             <feGaussianBlur stdDeviation={glow} result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
@@ -167,8 +181,8 @@ export const Gauge7_SonarRadarSweep: React.FC<Props> = ({ team, customization })
             coreGradientType === 'solid'
               ? corePrimary
               : coreGradientType === 'linear'
-              ? `url(#sapphireLinear7_${team.id})`
-              : `url(#sapphireDome7_${team.id})`
+              ? `url(#sapphireLinear7_${cleanId})`
+              : `url(#sapphireDome7_${cleanId})`
           }
           fillOpacity={coreGradientType === 'solid' ? coreOpacity : undefined}
           stroke={coreBorderColor}
@@ -250,7 +264,7 @@ export const Gauge7_SonarRadarSweep: React.FC<Props> = ({ team, customization })
 
         {/* Active Deficit Pointer Ray */}
         {showPointerRay && clampedVal > 0 && (
-          <g filter={glow > 0 ? `url(#dotGlow7_${team.id})` : undefined}>
+          <g filter={glow > 0 ? `url(#dotGlow7_${cleanId})` : undefined}>
             <line
               x1={ptX1}
               y1={ptY1}

@@ -189,24 +189,23 @@ export const ArchetypeControls: React.FC<Props> = ({ team, custom, onUpdate }) =
               </div>
             </div>
 
-            {/* Lit Ticks Color */}
+            {/* Tick Stroke Width & Note */}
             <div>
-              <label className="text-[11px] text-slate-400 block mb-1 font-mono">
-                Active Lit Ticks Color (Inside Probability Range)
-              </label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="color"
-                  value={custom.tickLitColor || custom.arcColorEnd || '#38bdf8'}
-                  onChange={(e) => onUpdate({ tickLitColor: e.target.value })}
-                  className="w-7 h-7 rounded border border-slate-700 bg-transparent cursor-pointer"
-                />
-                <input
-                  type="text"
-                  value={custom.tickLitColor || custom.arcColorEnd || '#38bdf8'}
-                  onChange={(e) => onUpdate({ tickLitColor: e.target.value })}
-                  className="w-full px-2 py-1 bg-slate-800 border border-slate-700 rounded text-xs font-mono text-slate-200"
-                />
+              <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono mb-1">
+                <span>Tick Stroke Width</span>
+                <span className="text-cyan-400 font-bold">{custom.tickStrokeWidth ?? 1.25}px</span>
+              </div>
+              <input
+                type="range"
+                min="0.75"
+                max="2.5"
+                step="0.25"
+                value={custom.tickStrokeWidth ?? 1.25}
+                onChange={(e) => onUpdate({ tickStrokeWidth: parseFloat(e.target.value) })}
+                className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400 mt-2"
+              />
+              <div className="text-[10px] text-cyan-400/90 font-mono mt-2">
+                Big Ticks Color and Small Ticks Color style the entire perimeter scale; active lit ticks illuminate at 0.7 opacity.
               </div>
             </div>
           </div>

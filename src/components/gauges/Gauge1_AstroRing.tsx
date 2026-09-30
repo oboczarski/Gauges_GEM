@@ -11,6 +11,7 @@ export const Gauge1_AstroRing: React.FC<Props> = ({ team, customization }) => {
   const cy = 160;
   const r = 104;
   const innerR = 88;
+  const cleanId = team.id.replace(/\s+/g, '_');
   const value = customization?.probabilityOverride ?? team.probability; // 95.3%
   const clampedVal = Math.min(100, Math.max(0, value));
   const currentAngle = 180 + (180 * clampedVal) / 100;
@@ -29,8 +30,8 @@ export const Gauge1_AstroRing: React.FC<Props> = ({ team, customization }) => {
   const arcEnd = customization?.arcColorEnd || '#38bdf8';
 
   // Core Dome Styling (Rich Luminous Emerald aura, non-black)
-  const corePrimary = customization?.corePrimaryColor || '#047857';
-  const coreSecondary = customization?.coreSecondaryColor || '#065f46';
+  const corePrimary = customization?.corePrimaryColor || '#059669';
+  const coreSecondary = customization?.coreSecondaryColor || '#0d9488';
   const coreGradientType = customization?.coreGradientType || 'radial';
   const coreOpacity = customization?.coreOpacity ?? 0.85;
   const coreBorderColor = customization?.coreBorderColor || '#10b981';
@@ -47,6 +48,7 @@ export const Gauge1_AstroRing: React.FC<Props> = ({ team, customization }) => {
   const decimalPlaces = customization?.decimalPlaces ?? 1;
 
   // Perimeter Tick Scale Styling (Separate from Arc Colors)
+  // Big Ticks (Major) Color and Small Ticks (Minor) Color color the entire scale; active lit ticks have 0.7 opacity
   const totalTicks = typeof customization?.tickCount === 'number'
     ? customization.tickCount
     : typeof customization?.uniqueOption1 === 'number'
@@ -54,7 +56,6 @@ export const Gauge1_AstroRing: React.FC<Props> = ({ team, customization }) => {
     : 50;
   const tickMajorColor = customization?.tickMajorColor || '#38bdf8';
   const tickMinorColor = customization?.tickMinorColor || '#334155';
-  const tickLitColor = customization?.tickLitColor || arcEnd;
   const tickMajorLength = customization?.tickMajorLength ?? 10;
   const tickMinorLength = customization?.tickMinorLength ?? 6;
   const tickStrokeWidth = customization?.tickStrokeWidth ?? 1.25;
@@ -81,7 +82,7 @@ export const Gauge1_AstroRing: React.FC<Props> = ({ team, customization }) => {
 
   // Track Fill Ribbon ending at Leading Beacon
   const showTrackFill = customization?.gauge1TrackFill !== false;
-  const trackFillOpacity = customization?.gauge1TrackFillOpacity ?? 0.4;
+  const trackFillOpacity = customization?.gauge1TrackFillOpacity ?? 0.85;
 
   // Background 180° track path
   const bgTrackPath = `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
@@ -104,6 +105,7 @@ export const Gauge1_AstroRing: React.FC<Props> = ({ team, customization }) => {
     : '';
 
   // Tick marks around outer perimeter with 4 small ticks between 2 big ticks
+  // Big ticks (major) and small ticks (minor) color the entire perimeter; active lit ticks have 0.7 opacity
   const ticks = Array.from({ length: totalTicks + 1 }).map((_, i) => {
     const angle = 180 + (180 * i) / totalTicks;
     const rad = (angle * Math.PI) / 180;
@@ -117,13 +119,10 @@ export const Gauge1_AstroRing: React.FC<Props> = ({ team, customization }) => {
     const y2 = cy + rInner * Math.sin(rad);
     const isLit = (i / totalTicks) * 100 <= clampedVal;
 
-    const strokeColor = isLit
-      ? tickLitColor
-      : isMajor
-      ? tickMajorColor
-      : tickMinorColor;
+    const strokeColor = isMajor ? tickMajorColor : tickMinorColor;
+    const strokeOpacity = isLit ? 0.7 : isMajor ? 0.28 : 0.16;
 
-    return { x1, y1, x2, y2, isMajor, isLit, strokeColor, index: i };
+    return { x1, y1, x2, y2, isMajor, isLit, strokeColor, strokeOpacity, index: i };
   });
 
   return (
@@ -136,7 +135,7 @@ export const Gauge1_AstroRing: React.FC<Props> = ({ team, customization }) => {
         <defs>
           {/* Main UserSpaceOnUse Multi-Stop Gradient for Active Arc & Track Fill */}
           <linearGradient
-            id={`auroraGrad1_${team.id}`}
+            id={`auroraGrad1_${cleanId}`}
             gradientUnits="userSpaceOnUse"
             x1={cx - r}
             y1={cy}
@@ -149,20 +148,33 @@ export const Gauge1_AstroRing: React.FC<Props> = ({ team, customization }) => {
           </linearGradient>
 
           {/* Center Dome Frosted Aurora Radial Gradient (Luminous & Vibrant) */}
-          <radialGradient id={`auroraCenterDome1_${team.id}`} cx="50%" cy="50%" r="85%">
+          <radialGradient
+            id={`auroraCenterDome1_${cleanId}`}
+            cx={cx}
+            cy={cy - innerR * 0.3}
+            r={innerR * 0.95}
+            gradientUnits="userSpaceOnUse"
+          >
             <stop offset="0%" stopColor={corePrimary} stopOpacity={coreOpacity} />
-            <stop offset="60%" stopColor={corePrimary} stopOpacity={coreOpacity * 0.95} />
+            <stop offset="55%" stopColor={corePrimary} stopOpacity={coreOpacity * 0.95} />
             <stop offset="100%" stopColor={coreSecondary} stopOpacity={coreOpacity} />
           </radialGradient>
 
           {/* Center Dome Linear Gradient */}
-          <linearGradient id={`auroraCenterLinear1_${team.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+          <linearGradient
+            id={`auroraCenterLinear1_${cleanId}`}
+            x1={cx}
+            y1={cy - innerR}
+            x2={cx}
+            y2={cy}
+            gradientUnits="userSpaceOnUse"
+          >
             <stop offset="0%" stopColor={corePrimary} stopOpacity={coreOpacity} />
             <stop offset="100%" stopColor={coreSecondary} stopOpacity={coreOpacity} />
           </linearGradient>
 
           {/* Precision Soft Glow Filter */}
-          <filter id={`auroraGlow1_${team.id}`} x="-30%" y="-30%" width="160%" height="160%">
+          <filter id={`auroraGlow1_${cleanId}`} x="-30%" y="-30%" width="160%" height="160%">
             <feGaussianBlur stdDeviation={glow} result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
@@ -178,8 +190,8 @@ export const Gauge1_AstroRing: React.FC<Props> = ({ team, customization }) => {
             coreGradientType === 'solid'
               ? corePrimary
               : coreGradientType === 'linear'
-              ? `url(#auroraCenterLinear1_${team.id})`
-              : `url(#auroraCenterDome1_${team.id})`
+              ? `url(#auroraCenterLinear1_${cleanId})`
+              : `url(#auroraCenterDome1_${cleanId})`
           }
           fillOpacity={coreGradientType === 'solid' ? coreOpacity : undefined}
           stroke={coreBorderColor}
@@ -222,7 +234,7 @@ export const Gauge1_AstroRing: React.FC<Props> = ({ team, customization }) => {
           </>
         )}
 
-        {/* Perimeter Calibrated Ticks (Major & Minor separate styling) */}
+        {/* Perimeter Calibrated Ticks (Major & Minor separate styling, active lit ticks at 0.7 opacity) */}
         {showTicks && (
           <g>
             {ticks.map((t) => (
@@ -234,7 +246,7 @@ export const Gauge1_AstroRing: React.FC<Props> = ({ team, customization }) => {
                 y2={t.y2}
                 stroke={t.strokeColor}
                 strokeWidth={t.isMajor ? tickStrokeWidth * 1.3 : tickStrokeWidth}
-                strokeOpacity={t.isLit ? 0.95 : t.isMajor ? 0.8 : 0.45}
+                strokeOpacity={t.strokeOpacity}
                 strokeLinecap="round"
               />
             ))}
@@ -255,9 +267,8 @@ export const Gauge1_AstroRing: React.FC<Props> = ({ team, customization }) => {
         {showTrackFill && activeFilledRibbonPath && (
           <path
             d={activeFilledRibbonPath}
-            fill={`url(#auroraGrad1_${team.id})`}
+            fill={`url(#auroraGrad1_${cleanId})`}
             fillOpacity={trackFillOpacity}
-            filter={glow > 0 ? `url(#auroraGlow1_${team.id})` : undefined}
           />
         )}
 
@@ -266,16 +277,16 @@ export const Gauge1_AstroRing: React.FC<Props> = ({ team, customization }) => {
           <path
             d={activeArcPath}
             fill="none"
-            stroke={`url(#auroraGrad1_${team.id})`}
+            stroke={`url(#auroraGrad1_${cleanId})`}
             strokeWidth={trackWidth}
             strokeLinecap="round"
-            filter={glow > 0 ? `url(#auroraGlow1_${team.id})` : undefined}
+            filter={glow > 0 ? `url(#auroraGlow1_${cleanId})` : undefined}
           />
         )}
 
         {/* Dynamic Leading Beacon Diamond Pin */}
         {showBeacon && clampedVal > 0 && (
-          <g transform={`translate(${curX}, ${curY})`} filter={glow > 0 ? `url(#auroraGlow1_${team.id})` : undefined}>
+          <g transform={`translate(${curX}, ${curY})`} filter={glow > 0 ? `url(#auroraGlow1_${cleanId})` : undefined}>
             <polygon
               points={`0,-${beaconSize} ${beaconSize},0 0,${beaconSize} -${beaconSize},0`}
               fill={beaconColor}

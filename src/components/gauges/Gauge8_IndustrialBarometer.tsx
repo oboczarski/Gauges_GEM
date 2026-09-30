@@ -11,6 +11,7 @@ export const Gauge8_IndustrialBarometer: React.FC<Props> = ({ team, customizatio
   const cy = 160;
   const r = 104;
   const innerR = 86;
+  const cleanId = team.id.replace(/\s+/g, '_');
   const value = customization?.probabilityOverride ?? team.probability; // 21.6%
   const clampedVal = Math.min(100, Math.max(0, value));
 
@@ -25,8 +26,8 @@ export const Gauge8_IndustrialBarometer: React.FC<Props> = ({ team, customizatio
   const arcEnd = customization?.arcColorEnd || '#f59e0b';
 
   // Core Dome Styling (Rich Warm Bronze Amber, non-black)
-  const corePrimary = customization?.corePrimaryColor || '#b45309';
-  const coreSecondary = customization?.coreSecondaryColor || '#92400e';
+  const corePrimary = customization?.corePrimaryColor || '#d97706';
+  const coreSecondary = customization?.coreSecondaryColor || '#b45309';
   const coreGradientType = customization?.coreGradientType || 'radial';
   const coreOpacity = customization?.coreOpacity ?? 0.85;
   const coreBorderColor = customization?.coreBorderColor || '#f59e0b';
@@ -101,7 +102,7 @@ export const Gauge8_IndustrialBarometer: React.FC<Props> = ({ team, customizatio
       >
         <defs>
           <linearGradient
-            id={`copperGrad8_${team.id}`}
+            id={`copperGrad8_${cleanId}`}
             gradientUnits="userSpaceOnUse"
             x1={cx - r}
             y1={cy}
@@ -113,18 +114,31 @@ export const Gauge8_IndustrialBarometer: React.FC<Props> = ({ team, customizatio
             <stop offset="100%" stopColor={arcEnd} />
           </linearGradient>
 
-          <radialGradient id={`bronzeHaloDome8_${team.id}`} cx="50%" cy="50%" r="85%">
+          <radialGradient
+            id={`bronzeHaloDome8_${cleanId}`}
+            cx={cx}
+            cy={cy - innerR * 0.3}
+            r={innerR * 0.95}
+            gradientUnits="userSpaceOnUse"
+          >
             <stop offset="0%" stopColor={corePrimary} stopOpacity={coreOpacity} />
-            <stop offset="60%" stopColor={corePrimary} stopOpacity={coreOpacity * 0.95} />
+            <stop offset="55%" stopColor={corePrimary} stopOpacity={coreOpacity * 0.95} />
             <stop offset="100%" stopColor={coreSecondary} stopOpacity={coreOpacity} />
           </radialGradient>
 
-          <linearGradient id={`bronzeHaloLinear8_${team.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+          <linearGradient
+            id={`bronzeHaloLinear8_${cleanId}`}
+            x1={cx}
+            y1={cy - innerR}
+            x2={cx}
+            y2={cy}
+            gradientUnits="userSpaceOnUse"
+          >
             <stop offset="0%" stopColor={corePrimary} stopOpacity={coreOpacity} />
             <stop offset="100%" stopColor={coreSecondary} stopOpacity={coreOpacity} />
           </linearGradient>
 
-          <filter id={`baroGlow8_${team.id}`} x="-30%" y="-30%" width="160%" height="160%">
+          <filter id={`baroGlow8_${cleanId}`} x="-30%" y="-30%" width="160%" height="160%">
             <feGaussianBlur stdDeviation={glow} result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
@@ -140,8 +154,8 @@ export const Gauge8_IndustrialBarometer: React.FC<Props> = ({ team, customizatio
             coreGradientType === 'solid'
               ? corePrimary
               : coreGradientType === 'linear'
-              ? `url(#bronzeHaloLinear8_${team.id})`
-              : `url(#bronzeHaloDome8_${team.id})`
+              ? `url(#bronzeHaloLinear8_${cleanId})`
+              : `url(#bronzeHaloDome8_${cleanId})`
           }
           fillOpacity={coreGradientType === 'solid' ? coreOpacity : undefined}
           stroke={coreBorderColor}
@@ -202,10 +216,10 @@ export const Gauge8_IndustrialBarometer: React.FC<Props> = ({ team, customizatio
           <path
             d={activeArcPath}
             fill="none"
-            stroke={`url(#copperGrad8_${team.id})`}
+            stroke={`url(#copperGrad8_${cleanId})`}
             strokeWidth={trackWidth}
             strokeLinecap="round"
-            filter={glow > 0 ? `url(#baroGlow8_${team.id})` : undefined}
+            filter={glow > 0 ? `url(#baroGlow8_${cleanId})` : undefined}
           />
         )}
 

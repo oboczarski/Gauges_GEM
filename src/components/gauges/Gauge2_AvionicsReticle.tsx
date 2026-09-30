@@ -11,6 +11,7 @@ export const Gauge2_AvionicsReticle: React.FC<Props> = ({ team, customization })
   const cx = 160;
   const cy = 160;
   const innerR = 86;
+  const cleanId = team.id.replace(/\s+/g, '_');
   const value = customization?.probabilityOverride ?? team.probability; // 89.5%
   const clampedVal = Math.min(100, Math.max(0, value));
 
@@ -24,8 +25,8 @@ export const Gauge2_AvionicsReticle: React.FC<Props> = ({ team, customization })
   const arcEnd = customization?.arcColorEnd || '#ec4899';
 
   // Core Dome Styling (Rich Royal Violet gradient, non-black)
-  const corePrimary = customization?.corePrimaryColor || '#6d28d9';
-  const coreSecondary = customization?.coreSecondaryColor || '#4c1d95';
+  const corePrimary = customization?.corePrimaryColor || '#7c3aed';
+  const coreSecondary = customization?.coreSecondaryColor || '#4338ca';
   const coreGradientType = customization?.coreGradientType || 'radial';
   const coreOpacity = customization?.coreOpacity ?? 0.85;
   const coreBorderColor = customization?.coreBorderColor || '#a855f7';
@@ -110,18 +111,31 @@ export const Gauge2_AvionicsReticle: React.FC<Props> = ({ team, customization })
         aria-label={`${team.name} Playoff Probability ${value.toFixed(decimalPlaces)}%`}
       >
         <defs>
-          <radialGradient id={`twilightDome2_${team.id}`} cx="50%" cy="50%" r="85%">
+          <radialGradient
+            id={`twilightDome2_${cleanId}`}
+            cx={cx}
+            cy={cy - innerR * 0.3}
+            r={innerR * 0.95}
+            gradientUnits="userSpaceOnUse"
+          >
             <stop offset="0%" stopColor={corePrimary} stopOpacity={coreOpacity} />
-            <stop offset="60%" stopColor={corePrimary} stopOpacity={coreOpacity * 0.95} />
+            <stop offset="55%" stopColor={corePrimary} stopOpacity={coreOpacity * 0.95} />
             <stop offset="100%" stopColor={coreSecondary} stopOpacity={coreOpacity} />
           </radialGradient>
 
-          <linearGradient id={`twilightLinear2_${team.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+          <linearGradient
+            id={`twilightLinear2_${cleanId}`}
+            x1={cx}
+            y1={cy - innerR}
+            x2={cx}
+            y2={cy}
+            gradientUnits="userSpaceOnUse"
+          >
             <stop offset="0%" stopColor={corePrimary} stopOpacity={coreOpacity} />
             <stop offset="100%" stopColor={coreSecondary} stopOpacity={coreOpacity} />
           </linearGradient>
 
-          <filter id={`histoGlow2_${team.id}`} x="-30%" y="-30%" width="160%" height="160%">
+          <filter id={`histoGlow2_${cleanId}`} x="-30%" y="-30%" width="160%" height="160%">
             <feGaussianBlur stdDeviation={glow} result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
@@ -137,8 +151,8 @@ export const Gauge2_AvionicsReticle: React.FC<Props> = ({ team, customization })
             coreGradientType === 'solid'
               ? corePrimary
               : coreGradientType === 'linear'
-              ? `url(#twilightLinear2_${team.id})`
-              : `url(#twilightDome2_${team.id})`
+              ? `url(#twilightLinear2_${cleanId})`
+              : `url(#twilightDome2_${cleanId})`
           }
           fillOpacity={coreGradientType === 'solid' ? coreOpacity : undefined}
           stroke={coreBorderColor}
@@ -201,7 +215,7 @@ export const Gauge2_AvionicsReticle: React.FC<Props> = ({ team, customization })
 
         {/* Reticle Vector Pointer Needle Indicator */}
         {showReticlePin && clampedVal > 0 && (
-          <g filter={glow > 0 ? `url(#histoGlow2_${team.id})` : undefined}>
+          <g filter={glow > 0 ? `url(#histoGlow2_${cleanId})` : undefined}>
             <line
               x1={pinInnerX}
               y1={pinInnerY}

@@ -38,37 +38,37 @@ interface Props {
 export const getDefaultCoreForTeam = (teamNumber: number) => {
   switch (teamNumber) {
     case 1:
-      return { primary: '#047857', secondary: '#065f46', border: '#10b981', text: '#f8fafc', subtext: '#94a3b8', name: 'Luminous Emerald' };
+      return { primary: '#059669', secondary: '#0d9488', border: '#10b981', text: '#f8fafc', subtext: '#94a3b8', name: 'Luminous Emerald' };
     case 2:
-      return { primary: '#6d28d9', secondary: '#4c1d95', border: '#a855f7', text: '#faf5ff', subtext: '#c084fc', name: 'Royal Violet' };
+      return { primary: '#7c3aed', secondary: '#4338ca', border: '#a855f7', text: '#faf5ff', subtext: '#c084fc', name: 'Royal Violet' };
     case 3:
-      return { primary: '#c2410c', secondary: '#9a3412', border: '#f97316', text: '#fffbeb', subtext: '#fbbf24', name: 'Solar Amber' };
+      return { primary: '#ea580c', secondary: '#d97706', border: '#f97316', text: '#fffbeb', subtext: '#fbbf24', name: 'Solar Amber' };
     case 5:
-      return { primary: '#0f766e', secondary: '#115e59', border: '#14b8a6', text: '#f0fdfa', subtext: '#5eead4', name: 'Oceanic Teal' };
+      return { primary: '#0d9488', secondary: '#0284c7', border: '#14b8a6', text: '#f0fdfa', subtext: '#5eead4', name: 'Oceanic Teal' };
     case 6:
-      return { primary: '#991b1b', secondary: '#047857', border: '#475569', text: '#f8fafc', subtext: '#94a3b8', name: 'Meridian Split' };
+      return { primary: '#dc2626', secondary: '#059669', border: '#475569', text: '#f8fafc', subtext: '#94a3b8', name: 'Meridian Split' };
     case 7:
-      return { primary: '#1d4ed8', secondary: '#1e40af', border: '#3b82f6', text: '#f0f9ff', subtext: '#7dd3fc', name: 'Electric Sapphire' };
+      return { primary: '#2563eb', secondary: '#4f46e5', border: '#3b82f6', text: '#f0f9ff', subtext: '#7dd3fc', name: 'Electric Sapphire' };
     case 8:
-      return { primary: '#b45309', secondary: '#92400e', border: '#f59e0b', text: '#fef3c7', subtext: '#fbbf24', name: 'Warm Bronze' };
+      return { primary: '#d97706', secondary: '#b45309', border: '#f59e0b', text: '#fef3c7', subtext: '#fbbf24', name: 'Warm Bronze' };
     case 10:
-      return { primary: '#4338ca', secondary: '#3730a3', border: '#818cf8', text: '#ffffff', subtext: '#c7d2fe', name: 'Starlight Indigo' };
+      return { primary: '#4f46e5', secondary: '#7c3aed', border: '#818cf8', text: '#ffffff', subtext: '#c7d2fe', name: 'Starlight Indigo' };
     default:
-      return { primary: '#047857', secondary: '#065f46', border: '#10b981', text: '#f8fafc', subtext: '#94a3b8', name: 'Emerald' };
+      return { primary: '#059669', secondary: '#0d9488', border: '#10b981', text: '#f8fafc', subtext: '#94a3b8', name: 'Emerald' };
   }
 };
 
 export const QUICK_CORE_THEMES = [
-  { name: 'Emerald', primary: '#047857', secondary: '#065f46', border: '#10b981' },
-  { name: 'Violet', primary: '#6d28d9', secondary: '#4c1d95', border: '#a855f7' },
-  { name: 'Amber', primary: '#c2410c', secondary: '#9a3412', border: '#f97316' },
-  { name: 'Teal', primary: '#0f766e', secondary: '#115e59', border: '#14b8a6' },
-  { name: 'Sapphire', primary: '#1d4ed8', secondary: '#1e40af', border: '#3b82f6' },
-  { name: 'Ruby', primary: '#be123c', secondary: '#881337', border: '#fb7185' },
-  { name: 'Bronze', primary: '#b45309', secondary: '#78350f', border: '#f59e0b' },
-  { name: 'Indigo', primary: '#4338ca', secondary: '#312e81', border: '#818cf8' },
-  { name: 'Magenta', primary: '#be185d', secondary: '#831843', border: '#f43f5e' },
-  { name: 'Slate', primary: '#334155', secondary: '#1e293b', border: '#64748b' },
+  { name: 'Emerald', primary: '#059669', secondary: '#0d9488', border: '#10b981' },
+  { name: 'Violet', primary: '#7c3aed', secondary: '#4338ca', border: '#a855f7' },
+  { name: 'Amber', primary: '#ea580c', secondary: '#d97706', border: '#f97316' },
+  { name: 'Teal', primary: '#0d9488', secondary: '#0284c7', border: '#14b8a6' },
+  { name: 'Sapphire', primary: '#2563eb', secondary: '#4f46e5', border: '#3b82f6' },
+  { name: 'Ruby', primary: '#e11d48', secondary: '#be123c', border: '#fb7185' },
+  { name: 'Bronze', primary: '#d97706', secondary: '#b45309', border: '#f59e0b' },
+  { name: 'Indigo', primary: '#4f46e5', secondary: '#7c3aed', border: '#818cf8' },
+  { name: 'Magenta', primary: '#db2777', secondary: '#9333ea', border: '#f43f5e' },
+  { name: 'Slate', primary: '#475569', secondary: '#334155', border: '#64748b' },
 ];
 
 type TabType = 'palette' | 'core' | 'archetype' | 'geometry' | 'display';
@@ -266,11 +266,11 @@ export const ToolsLab: React.FC<Props> = ({
             id="lab-stage-container"
             className="my-5 p-8 flex items-center justify-center bg-[#07090e] border border-slate-800/80 rounded-xl relative overflow-hidden"
           >
-            {/* Separate Stage Ambient Glow (independent from custom arc multi-stop colors) */}
+            {/* Separate Stage Ambient Glow (100% independent from core dome and progress arc colors) */}
             <div
               className="absolute inset-0 pointer-events-none blur-3xl transition-all duration-300"
               style={{
-                background: `radial-gradient(circle at 50% 75%, ${custom.stageBackdropColor || custom.corePrimaryColor || '#064e3b'}, transparent 75%)`,
+                background: `radial-gradient(circle at 50% 75%, ${custom.stageBackdropColor || '#0e1726'}, transparent 75%)`,
                 opacity: custom.stageBackdropOpacity ?? 0.28,
               }}
             />
@@ -289,7 +289,7 @@ export const ToolsLab: React.FC<Props> = ({
                 <div className="flex items-center gap-1.5">
                   <input
                     type="color"
-                    value={custom.stageBackdropColor || custom.corePrimaryColor || '#064e3b'}
+                    value={custom.stageBackdropColor || '#0e1726'}
                     onChange={(e) =>
                       onUpdateCustomization(currentTeam.id, {
                         stageBackdropColor: e.target.value,
@@ -299,7 +299,7 @@ export const ToolsLab: React.FC<Props> = ({
                   />
                   <input
                     type="text"
-                    value={custom.stageBackdropColor || custom.corePrimaryColor || '#064e3b'}
+                    value={custom.stageBackdropColor || '#0e1726'}
                     onChange={(e) =>
                       onUpdateCustomization(currentTeam.id, {
                         stageBackdropColor: e.target.value,
@@ -719,7 +719,7 @@ export const ToolsLab: React.FC<Props> = ({
                     <div className="flex items-center gap-2">
                       <input
                         type="color"
-                        value={custom.stageBackdropColor || defaultCore.primary}
+                        value={custom.stageBackdropColor || '#0e1726'}
                         onChange={(e) =>
                           onUpdateCustomization(currentTeam.id, {
                             stageBackdropColor: e.target.value,
@@ -729,7 +729,7 @@ export const ToolsLab: React.FC<Props> = ({
                       />
                       <input
                         type="text"
-                        value={custom.stageBackdropColor || defaultCore.primary}
+                        value={custom.stageBackdropColor || '#0e1726'}
                         onChange={(e) =>
                           onUpdateCustomization(currentTeam.id, {
                             stageBackdropColor: e.target.value,
@@ -847,14 +847,14 @@ export const ToolsLab: React.FC<Props> = ({
                     Center Core Colors
                   </div>
                   <div className="text-[11px] text-cyan-400/90 font-mono mt-0.5">
-                    Active palette: {defaultCore.name} (Customizable center & base tints)
+                    Active palette: {defaultCore.name} · Core Primary sets the glowing aura or solid fill; Core Secondary sets the perimeter base/rim tint.
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-[11px] text-slate-400 block mb-1 font-mono">
-                      Core Primary (Center Tint)
+                      Core Primary (Aura / Solid Color)
                     </label>
                     <div className="flex items-center gap-2">
                       <input
